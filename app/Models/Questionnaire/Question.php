@@ -10,16 +10,12 @@ class Question extends Model
     protected $guarded = [];
     //
     protected $casts = [
-        'questions'  => 'json',
+        'question'  => 'json',
     ];
-    //
-    public function answers(){
-        return $this->hasMany('App\Answer','question_id');
-    }
     //
     public function users(){
         return $this->belongsToMany(
-            'App\User','user_question','question_id','user_id'
-        );
+            'App\User','answers','question_id','user_id'
+        )->withPivot('answer')->using('App\Models\Questionnaire\Answer');
     }
 }

@@ -16,7 +16,8 @@ class CreateGroupInfoBasesTable extends Migration
         Schema::create('group_info_bases', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->timestamps();
-            $table->string('name');
+            $table->string('name')->index();
+            $table->text('icon')->nullable();
         });
     }
 

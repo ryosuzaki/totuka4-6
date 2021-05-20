@@ -97,10 +97,11 @@ class QuestionController extends Controller
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
         }
-        $question=Question::find($id)->fill([
+        //
+        Question::find($id)->fill([
             'name'=>$request['name'],
         ])->save();
-        return redirect()->route('question.edit',$question->id);
+        return redirect()->route('question.show',$id);
     }
 
     /**
@@ -113,35 +114,9 @@ class QuestionController extends Controller
     {
         //
         $question=Question::find($id);
-        $question->answers()->delete();
         $question->users()->detach();
         $question->delete();
         return redirect()->route('home');
     }
 
-    /**
-     * Attach question to user
-     *
-     * @param int $question_id,$user_id
-     * @return \Illuminate\Http\Response
-     */
-    public function attachUser($question_id,$user_id)
-    {
-        $question=Question::find($question_id);
-        $user->users()->attach($user_id);
-        return redirect()->route('user.question.index',$user_id);
-    }
-
-    /**
-     * Detach question to user
-     *
-     * @param int $question_id,$user_id
-     * @return \Illuminate\Http\Response
-     */
-    public function detachUser($question_id,$user_id)
-    {
-        $question=Question::find($question_id);
-        $user->users()->detach($user_id);
-        return redirect()->route('user.question.index',$user_id);
-    }
 }

@@ -22,45 +22,70 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
+//グループのユーザ一覧
+Route::get('group/{group}/users', 'Group\GroupController@users');
+//
+Route::get('group/{group}/roles', 'Group\GroupController@roles');
+//
+Route::get('group/map', 'Group\GroupController@map')->name('group.map');
+//
+Route::get('group/{group}/location/edit', 'Group\GroupLocationController@edit')->name('group.location.edit');
+Route::put('group/{group}/location', 'Group\GroupLocationController@update')->name('group.location.update');
+
+
+//
+Route::get('group/{group}/info_base/{info_base}/info/edit', 'Group\GroupInfoController@edit')->name('group.info.edit');
+Route::put('group/{group}/info_base/{info_base}/info', 'Group\GroupInfoController@update')->name('group.info.update');
+Route::delete('group/{group}/info_base/{info_base}/info', 'Group\GroupInfoController@destroy')->name('group.info.destroy');
+
+
+
+//
+Route::get('user/{user}/answers', 'UserController@answers');
+
+Route::post('user/{user}/info_base/{info_base}/attach', 'UserInfoBaseController@attach')->name('user.info_base.attach');
+Route::post('user/{user}/info_base/{info_base}/detach', 'UserInfoBaseController@detach')->name('user.info_base.detach');
+
+Route::get('user/{user}/info_base/{info_base}/info/edit', 'UserInfoController@edit')->name('user.info_base.info.edit');
+Route::put('user/{user}/info_base/{info_base}/info', 'UserInfoController@update')->name('user.info_base.info.update');
+Route::delete('user/{user}/info_base/{info_base}/info', 'UserInfoController@destroy')->name('user.info_base.info.destroy');
+
+
+
+
+
 //
 Route::resource('group', 'Group\GroupController',['except' => [
-    'index',
 ]]);
 //
 Route::resource('group_info_base','Group\GroupInfoBaseController',['except' => [
 ]]);
-//info_idが決まればgroupが一意
-Route::resource('group.info_base.group_info', 'Group\GroupInfoController',['except' => [
-    'index',
-]])->shallow();
-
-//role_idが決まればgroupが一意
-Route::resource('group.group_role', 'Group\GroupRoleController',['except' => [
-    
-]])->shallow();
-
-
-
 //
+Route::resource('group.group_role', 'Group\GroupRoleController',['except' => [
+]])->shallow();
+//
+Route::resource('group.user', 'Group\GroupUserController',['except' => [
+]]);
+    
 Route::resource('user','UserController',['except' => [
-    'index','create', 'store', 
 ]]);
 
 Route::resource('user_info_base','UserInfoBaseController',['except' => [
 ]]);
 
-Route::resource('user.info_base.user_info','UserInfoController',['except' => [
-    'index',
-]])->shallow();
+//
+Route::resource('user.group', 'UserGroupController',['only' => [
+    'index','show','destroy'
+]]);
 
 
-
+Route::resource('user.question.answer','Questionnaire\AnswerController',['except' => [
+]]);
 //
 Route::resource('question','Questionnaire\QuestionController',['except' => [
 ]]);
 
-Route::resource('user.question.answer','Questionnaire\AnswerController',['except' => [
-]])->shallow();
+
 
 
     

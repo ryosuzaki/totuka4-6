@@ -16,8 +16,8 @@ class CreateGroupRolesTable extends Migration
         Schema::create('group_roles', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('group_id');
-            $table->unsignedTinyInteger('role_id');
-            $table->index(['role_id', 'group_id']);
+            $table->unsignedTinyInteger('role_rank');
+            $table->index(['role_rank', 'group_id']);
             $table->string('name');
             $table->timestamps();
             $table->json('permissions')->nullable();

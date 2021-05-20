@@ -14,10 +14,10 @@ class CreateUserInfosTable extends Migration
     public function up()
     {
         Schema::create('user_infos', function (Blueprint $table) {
-            $table->bigIncrements('id');
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('base_id');
             $table->index(['user_id', 'base_id']);
+            $table->unsignedBigInteger('updated_by');
             $table->timestamps();
             $table->json('info')->nullable();
         });

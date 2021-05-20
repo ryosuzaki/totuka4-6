@@ -15,7 +15,8 @@ class UserInfoBasesTableSeeder extends Seeder
         DB::table('user_info_bases')->insert([
             [
                 'id' => 1,
-                'name' => '基本情報'
+                'name' => '情報',
+                'icon'=>'<i class="material-icons">health_and_safety</i>',
             ]
         ]);
     }

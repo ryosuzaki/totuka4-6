@@ -15,7 +15,13 @@ class GroupInfoBasesTableSeeder extends Seeder
         DB::table('group_info_bases')->insert([
             [
                 'id' => 1,
-                'name' => '基本情報'
+                'name' => '基本情報',
+                'icon'=>'<span class="material-icons">info</span>'
+            ],
+            [
+                'id' => 2,
+                'name' => '混雑状況',
+                'icon'=>'<span class="material-icons">groups</span>'
             ]
         ]);
     }

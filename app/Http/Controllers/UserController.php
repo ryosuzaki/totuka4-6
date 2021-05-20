@@ -12,11 +12,11 @@ use Validator;
 class UserController extends Controller
 {
     //
-    
     public function __construct()
     {
         $this->middleware('auth');
     }
+
     /**
      * Display the specified resource.
      *
@@ -26,7 +26,10 @@ class UserController extends Controller
     public function show($id)
     {
         $user=User::find($id);
-        return view('user.show')->with(['user'=>$user,'bases'=>$user->infoBases()->get(),'infos'=>$user->infos()->get()]);
+        return view('user.show')->with([
+            'user'=>$user,
+            'infos'=>$user->infoBases()->get()
+            ]);
     }
 
     /**
@@ -75,60 +78,26 @@ class UserController extends Controller
     {
         //
         $user=User::find($id);
-        $user->infos()->delete();
+        $user->groups()->detach();
+        $user->groupRoles()->detach();
+        $user->questions()->detach();
+        $user->infoBases()->detach();
         $user->delete();
         return redirect()->route('home');
     }
 
     /**
-     * Attach user to group
+     * アンケート回答一覧
      *
-     * @param int $user_id,$group_id
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function attachGroup($user_id,$group_id)
-    {
-        $user=User::find($user_id);
-        $user->groups()->attach($group_id);
-        return redirect()->route('user.show',$user_id);
-    }
-
-    /**
-     * Detach user to group
-     *
-     * @param int $user_id,$group_id
-     * @return \Illuminate\Http\Response
-     */
-    public function detachGroup($user_id,$group_id)
-    {
-        $user=User::find($user_id);
-        $user->groups()->detach($group_id);
-        return redirect()->route('user.show',$user_id);
-    }
-
-    /**
-     * Attach question to user
-     *
-     * @param int $user_id,$question_id
-     * @return \Illuminate\Http\Response
-     */
-    public function attachQuestion($user_id,$question_id)
-    {
-        $user=User::find($user_id);
-        $user->questions()->attach($question_id);
-        return redirect()->route('user.question.index',$user_id);
-    }
-
-    /**
-     * Detach question to user
-     *
-     * @param int $user_id,$question_id
-     * @return \Illuminate\Http\Response
-     */
-    public function detachQuestion($user_id,$question_id)
-    {
-        $user=User::find($user_id);
-        $user->questions()->detach($question_id);
-        return redirect()->route('user.question.index',$user_id);
+    public function answers($id){
+        //
+        $user=User::find($id);
+        return view('user.answers')->with([
+            'user'=>$user,
+            'answers'=>$user->questions()->get()
+            ]);
     }
 }

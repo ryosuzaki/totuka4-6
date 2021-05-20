@@ -21,6 +21,17 @@ class GroupController extends Controller
     {
         $this->middleware('auth');
     }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        //
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -48,28 +59,22 @@ class GroupController extends Controller
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
         }
-        //create relate models
+        //
         $group=Group::create([
             'name'=>$request->name,
         ]);
-        $admin=GroupRole::create([
-            'group_id'=>$group->id,
-            'role_id'=>0,
-            'name'=>'admin',
+        $role=$group->roles()->create([
+            'role_rank'=>0,
+            'name'=>'管理者',
             'password'=>Hash::make($request->password),
+        ]); 
+        $group->users()->attach(Auth::id(),[
+            'role_id'=>$role->id,
         ]);
-
-        $member=GroupMember::create([
-            'user_id'=>Auth::id(),
-            'group_id'=>$group->id,
-            'role_id'=>0,
-        ]);
-        $info=GroupInfo::create([
-            'group_id'=>$group->id,
-            'base_id'=>1,
+        $group->infoBases()->attach(1,[
             'updated_by'=>Auth::id(),
         ]);
-        $group->infoBases()->attach(1);
+        $group->location()->create();
         return redirect()->route('group.show',$group->id);
     }
 
@@ -83,7 +88,7 @@ class GroupController extends Controller
     {
         //
         $group=Group::find($id);
-        return view('group.show')->with(['group'=>$group,'bases'=>$group->infoBases()->get(),'infos'=>$group->infos()->get()]);
+        return view('group.show')->with(['group'=>$group,'infos'=>$group->infoBases()->get()]);
     }
 
     /**
@@ -113,10 +118,10 @@ class GroupController extends Controller
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
         }
-        $group=Group::find($id)->fill([
+        Group::find($id)->fill([
             'name'=>$request['name'],
         ])->save();
-        return redirect()->route('group.show',  $id);
+        return redirect()->route('group.show', $id);
     }
 
     /**
@@ -129,37 +134,54 @@ class GroupController extends Controller
     {
         //delete all relate models
         $group=Group::find($id);
-        $group->infos()->delete();
-        $group->info_bases()->delete();
-        $group->members()->delete();
+        $group->info_bases()->detach();
+        $group->users()->detach();
         $group->roles()->delete();
         $group->delete();
         return redirect()->route('group.home');
     }
 
     /**
-     * Attach user to group
+     * ユーザ一覧
      *
-     * @param int $group_id,$user_id
+     * @param  int  $group_id,$role_id
      * @return \Illuminate\Http\Response
      */
-    public function attachUser($group_id,$user_id)
-    {
+    public function users($group_id,$role_id){
         $group=Group::find($group_id);
-        $group->users()->attach($user_id);
-        return redirect()->route('user.show',$user_id);
+        return view('group.users')->with([
+            'group'=>$group,
+            'users'=>$group->roles()->where('role_id',$role_id)->users()->get(),
+            ]);  
     }
 
     /**
-     * Detach user to group
+     * ロール一覧
      *
-     * @param int $group_id,$user_id
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function detachUser($group_id,$user_id)
-    {
-        $group=Group::find($group_id);
-        $group->users()->detach($user_id);
-        return redirect()->route('user.show',$user_id);
+    public function roles($id){
+        $group=Group::find($id);
+        return view('group.roles')->with([
+            'group'=>$group,
+            'roles'=>$group->roles()->get(),
+            ]);  
+    }
+
+    /**
+     * グループをマップ表示
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function map(){
+        $all=Group::all();
+        $groups=[];
+        foreach($all as $group){
+            $groups[]=$group->location()->get();
+        }
+        return view('group.map')->with([
+            'groups'=>$groups,
+        ]);
     }
 }

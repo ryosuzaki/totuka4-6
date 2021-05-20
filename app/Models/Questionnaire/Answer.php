@@ -2,21 +2,14 @@
 
 namespace App\Models\Questionnaire;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class Answer extends Model
+class Answer extends Pivot
 {
     //
     protected $guarded = [];
     //
     protected $casts = [
-        'answers'  => 'json',
+        'answer'  => 'json',
     ];
-    //
-    public function user(){
-        return $this->belongsTo('App\User','user_id');
-    }
-    public function question(){
-        return $this->belongsTo('App\Question','question_id');
-    }
 }

@@ -16,7 +16,8 @@ class CreateUserInfoBasesTable extends Migration
         Schema::create('user_info_bases', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->timestamps();
-            $table->string('name');
+            $table->string('name')->index();
+            $table->text('icon')->nullable();
         });
     }
 

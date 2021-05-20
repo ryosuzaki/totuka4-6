@@ -9,14 +9,10 @@ class UserInfoBase extends Model
     //
     protected $guarded=[];
     //
-    public function infos(){
-        return $this->hasMany('App\UserInfo','base_id');
-    }
-    //
     public function users()
     {
         return $this->belongsToMany(
-            'App\User','user_user_info_base','user_info_base_id','user_id'
-        );
+            'App\User','user_infos','base_id','user_id'
+        )->withPivot('updated_by','info')->using('App\UserInfo');
     }
 }

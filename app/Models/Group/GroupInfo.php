@@ -2,31 +2,14 @@
 
 namespace App\Models\Group;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class GroupInfo extends Model
+class GroupInfo extends Pivot
 {
-    use SoftDeletes;
     //
     protected $guarded = [];
     //
     protected $casts = [
         'info'  => 'json',
     ];
-    /**
-     * 日付へキャストする属性
-     *
-     * @var array
-     */
-    protected $dates = ['deleted_at'];
-    //
-    public function base(){
-        return $this->belongsTo('App\Models\Group\GroupInfoBase', 'base_id');
-    }
-    //
-    public function group(){
-        return $this->belongsTo('App\Models\Group\Group', 'group_id');
-    }
-    
 }

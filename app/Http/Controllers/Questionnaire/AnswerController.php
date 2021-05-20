@@ -24,12 +24,7 @@ class AnswerController extends Controller
     public function index($user_id,$question_id)
     {
         //
-        $user=User::find($user_id);
-        return view('questionnaire.answer.index')->with([
-            'user'=>$user,
-            'question'=>Question::find($question_id),
-            'answers'=>$user->answers()->where('question_id',$question_id)->get(),
-            ]);
+        
     }
 
     /**
@@ -62,49 +57,54 @@ class AnswerController extends Controller
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
         }
-        //answer
-        Answer::create([
-            'user_id'=>$user_id,
-            'question_id'=>$question_id,
-            'answers'=>$request->toArray()['info'],
+        //
+        $user=User::find($user_id);
+        $user->questions()->attach($question_id,[
+            'answer'=>$request->toArray()['answer'],
         ]);
-        User::find($user_id)->questions()->attach($question_id);
-        return redirect()->route('user.question.answer.index',[$user_id,$question_id]);
+        return redirect()->route('user.questionnaire',$user_id);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  int  $user_id,$question_id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($user_id,$question_id)
     {
         //
-        return view('questionnaire.answer.show')->with(['answer'=>Answer::find($id)]);
+        $user=User::find($user_id);
+        return view('questionnaire.answer.show')->with([
+            'answer'=>$user->questions()->where('question_id',$question_id)->get(),
+            'user'=>$user,
+            ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  int  $user_id,$question_id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($user_id,$question_id)
     {
         //
-        $answer=Answer::find($id);
-        return view('questionnaire.answer.edit')->with(['answer'=>$answer,'user'=>$answer->user()->first(),'question'=>$answer->question()->first()]);
+        $user=User::find($user_id);
+        return view('questionnaire.answer.edit')->with([
+            'answer'=>$user->questions()->where('question_id',$question_id)->get(),
+            'user'=>$user,
+            ]);
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  int  $user_id,$question_id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request,$id)
+    public function update(Request $request,$user_id,$question_id)
     {
         //validation
         $validator = Validator::make($request->all(),[
@@ -113,11 +113,11 @@ class AnswerController extends Controller
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
         }
-        //answer
-        $answer=Answer::find($id);
-        $answer->fill([
-            'answers'=>$request->toArray()['info'],
-        ])->save();
-        return redirect()->route('user.show',$user->id);
+        //
+        $user=User::find($user_id);
+        $user->questions()->updateExistingPivot($question_id,[
+            'answer'=>$request->toArray()['answer'],
+        ]);
+        return redirect()->route('user.questionnaire',$user_id);
     }
 }

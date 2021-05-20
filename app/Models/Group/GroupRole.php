@@ -21,9 +21,9 @@ class GroupRole extends Model
         return $this->belongsTo('App\Models\Group\Group', 'group_id');
     }
     //
-    public function members(){
+    public function users(){
         return $this->belongsToMany(
-            'App\Models\Group\GroupMember','group_member_group_role','role_id','member_id'
+            'App\Models\Group\GroupUser','group_user','role_id','user_id'
         );
     }
 }

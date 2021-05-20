@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\User;
 use App\UserInfoBase;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
@@ -101,7 +102,7 @@ class UserInfoBaseController extends Controller
         $base=UserInfoBase::find($id)->fill([
             'name'=>$request['name'],
         ])->save();
-        return redirect()->route('user.info_base.edit',$base->id);
+        return redirect()->route('user.info_base.edit',$id);
     }
 
     /**
@@ -114,8 +115,39 @@ class UserInfoBaseController extends Controller
     {
         //
         $base=UserInfoBase::find($id);
-        $base->infos()->delete();
+        $base->users()->detach($id);
         $base->delete();
         return redirect()->route('home');
     }
+
+    /**
+     * 
+     *
+     * @param  int  $user_id,$base_id
+     * @return \Illuminate\Http\Response
+     */
+    public function attach($user_id,$base_id)
+    {
+        //
+        $user=User::find($user_id);
+        $user->infoBases()->attach($base_id,[
+            'updated_by'=>Auth::id(),
+        ]);
+        return redirect()->route('user.info_base.info.edit',[$user_id,$base_id]);
+    }
+
+    /**
+     * 
+     *
+     * @param  int  $user_id,$base_id
+     * @return \Illuminate\Http\Response
+     */
+    public function detach($user_id,$base_id)
+    {
+        //
+        $user=User::find($user_id);
+        $user->infoBases()->detach($base_id);
+        return redirect()->route('user.show',$user_id);
+    }
+
 }

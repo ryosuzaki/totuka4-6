@@ -33,7 +33,7 @@ class RegisterController extends Controller
      */
     protected function redirectTo()
     {
-        return route('user.show',Auth::id());
+        return route('user.info_base.info.edit',[Auth::id(),1]);
     }
     /**
      * Create a new controller instance.
@@ -73,11 +73,9 @@ class RegisterController extends Controller
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
-        UserInfo::create([
-            'user_id'=>$user->id,
-            'base_id'=>1,
+        $user->infoBases()->attach(1,[
+            'updated_by'=>Auth::id(),
         ]);
-        $user->infoBases()->attach(1);
         return $user;
     }
 }

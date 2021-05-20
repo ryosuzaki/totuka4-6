@@ -20,66 +20,30 @@ class GroupInfoController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     * 
-     * @param  int $group_id $base_id
-     * @return \Illuminate\Http\Response
-     */
-    public function create($group_id,$base_id)
-    {
-        //
-        return view('group.info.create')->with([
-            'group'=>Group::find($group_id),
-            'base'=>GroupInfoBase::find($base_id),
-            ]);
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  int $group_id,$base_id
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request,$group_id,$base_id)
-    {
-        //validation
-        $validator = Validator::make($request->all(),[
-        ]);
-        if ($validator->fails()) {
-            return back()->withErrors($validator)->withInput();
-        }
-        //info
-        GroupInfo::create([
-            'group_id'=>$group_id,
-            'base_id'=>$base_id,
-            'updated_by'=>Auth::id(),
-        ]);
-        Group::find($group_id)->infoBases()->attach($base_id);
-        return redirect()->route('group.show',$group_id);
-    }
-
-    /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  int  $group_id,$base_id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($group_id,$base_id)
     {
         //
-        $info=GroupInfo::find($id);
-        return view('group.info.edit')->with(['info'=>$info,'group'=>$info->group()->first(),'base'=>$info->base()->first()]);
+        $group=Group::find($group_id);
+        return view('group.info_base.edit.'.$base_id)->with([
+            'info'=>$info,
+            'group'=>$info->group()->first(),
+            'base'=>$info->base()->first()
+            ]);
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  int  $group_id,$base_id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request,$id)
+    public function update(Request $request,$group_id,$base_id)
     {
         //validation
         $validator = Validator::make($request->all(),[

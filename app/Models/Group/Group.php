@@ -11,7 +11,7 @@ class Group extends Model
     //
     public function users(){
         return $this->belongsToMany(
-            'App\User','group_members','group_id','user_id'
+            'App\User','group_users','group_id','user_id'
         );
     }
     //
@@ -19,14 +19,13 @@ class Group extends Model
         return $this->hasMany('App\Models\Group\GroupRole','group_id');
     }
     //
-    public function infos(){
-        return $this->hasMany('App\Models\Group\GroupInfo','group_id');
-    }
-    //
     public function infoBases(){
         return $this->belongsToMany(
-            'App\Models\Group\GroupInfoBase','group_group_info_base','group_id','group_info_base_id'
+            'App\Models\Group\GroupInfoBase','group_infos','group_id','base_id'
         );
     }
 
+    public function location(){
+        return $this->hasOne('App\Models\Group\GroupLocation', 'group_id');
+    }
 }

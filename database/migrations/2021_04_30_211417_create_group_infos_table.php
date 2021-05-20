@@ -14,14 +14,12 @@ class CreateGroupInfosTable extends Migration
     public function up()
     {
         Schema::create('group_infos', function (Blueprint $table) {
-            $table->bigIncrements('id');
             $table->unsignedBigInteger('group_id');
             $table->unsignedBigInteger('base_id');
             $table->index(['base_id', 'group_id']);
             $table->unsignedBigInteger('updated_by');
             $table->timestamps();
             $table->json('info')->nullable();
-            $table->softDeletes();
         });
     }
 

@@ -2,9 +2,9 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class UserInfo extends Model
+class UserInfo extends Pivot
 {
     //
     protected $guarded=[];
@@ -12,12 +12,4 @@ class UserInfo extends Model
     protected $casts = [
         'info'  => 'json',
     ];
-    //
-    public function user(){
-        return $this->belongsTo('App\User','user_id');
-    }
-    //
-    public function base(){
-        return $this->belongsTo('App\UserInfoBase','base_id');
-    }
 }
